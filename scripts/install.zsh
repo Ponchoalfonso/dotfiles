@@ -41,7 +41,6 @@ sedi 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' ~/.zshrc
 sedi 's|^plugins=.*|plugins=(git zsh-vi-mode fast-syntax-highlighting)|' ~/.zshrc
 sedi '$a\'"$P10K_SOURCE"'' ~/.zshrc
 
-
 # Clone dotfiles
 echo "dotfiles.install ==> Cloning dotfiles..."
 git clone --bare https://github.com/Ponchoalfonso/dotfiles.git $HOME/.dotfiles
