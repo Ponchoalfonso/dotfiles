@@ -10,6 +10,17 @@ sedi() {
   fi
 }
 
+INSTANT_PROMPT='# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi'
+
+P10K_SOURCE='# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
+
+
 # Install Oh My Zsh
 echo "dotfiles.install ==> Installing Oh My Zsh..."
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -24,9 +35,11 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/the
 
 # Overwrite Oh My Zsh config in ~/.zshrc
 echo "dotfiles.install ==> Configuring .zshrc..."
+sedi '1i\'"$INSTANT_PROMPT"'' ~/.zshrc
 sedi 's|^# ZSH_CUSTOM=.*|ZSH_CUSTOM=$HOME/.config/oh-my-zsh|' ~/.zshrc
 sedi 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' ~/.zshrc
 sedi 's|^plugins=.*|plugins=(git zsh-vi-mode fast-syntax-highlighting)|' ~/.zshrc
+sedi '$a\'"$P10K_SOURCE"'' ~/.zshrc
 
 
 # Clone dotfiles
