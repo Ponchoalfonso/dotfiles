@@ -56,4 +56,11 @@ echo '!/LICENSE' >> $HOME/.dotfiles/info/sparse-checkout
 
 dotf checkout
 
+dotf submodule update --init --recursive
+
+echo "dotfiles.install ==> Setting up nvim post-push hook..."
+mkdir -p $HOME/.config/nvim/.git/hooks
+cp $HOME/scripts/nvim-post-push.zsh $HOME/.config/nvim/.git/hooks/post-push
+chmod +x $HOME/.config/nvim/.git/hooks/post-push
+
 echo "dotfiles.install ==> Done! Restart your shell."
