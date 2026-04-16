@@ -5,9 +5,7 @@ return {
     input = {}, -- Enhances `ask()`
     picker = { -- Enhances `select()`
       actions = {
-        opencode_send = function(...)
-          return require('opencode').snacks_picker_send(...)
-        end,
+        opencode_send = function(...) return require('opencode').snacks_picker_send(...) end,
       },
       win = {
         input = {
