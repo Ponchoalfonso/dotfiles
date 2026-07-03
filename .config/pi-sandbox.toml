@@ -1,0 +1,7 @@
+# pi-sandbox config
+# Precedence: flags > environment variables > this file.
+image = "ghcr.io/ponchoalfonso/pi-sandbox:latest"
+pull = true
+pi-home = "~/.pi/agent"
+context-home = "~/docs"
+gh-config = "~/.config/gh"

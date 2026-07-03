@@ -18,10 +18,21 @@ BUILTIN_PI_HOME = "~/.pi/agent"
 SCAFFOLD_CONTEXT_HOME = "~/docs"
 CONFIG_HOME = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")).expanduser()
 CONFIG_PATH = CONFIG_HOME / "pi-sandbox.toml"
-CONTAINER_HOME = "/root"
+CONTAINER_HOME = "/home/pi"
+SCAFFOLD_GH_CONFIG = str(CONFIG_HOME / "gh")
+CONTAINER_GH_CONFIG = f"{CONTAINER_HOME}/.config/gh"
 
 VOLUME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
-CONFIG_KEYS = {"pull", "image", "pi-home", "pi_home", "context-home", "context_home"}
+CONFIG_KEYS = {
+    "pull",
+    "image",
+    "pi-home",
+    "pi_home",
+    "context-home",
+    "context_home",
+    "gh-config",
+    "gh_config",
+}
 PRUNE_LABEL = "dev.pi-sandbox.prunable=true"
 
 
@@ -159,7 +170,8 @@ def scaffold_config() -> int:
         f'image = "{BUILTIN_IMAGE}"\n'
         "pull = true\n"
         f'pi-home = "{BUILTIN_PI_HOME}"\n'
-        f'context-home = "{SCAFFOLD_CONTEXT_HOME}"\n',
+        f'context-home = "{SCAFFOLD_CONTEXT_HOME}"\n'
+        f'gh-config = "{SCAFFOLD_GH_CONFIG}"\n',
         encoding="utf-8",
     )
     print(f"created {CONFIG_PATH}")
@@ -199,7 +211,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--workspace",
         default=None,
-        help="Host workspace mounted at /workspace. Defaults to $PI_SANDBOX_WORKSPACE or current directory.",
+        help="Host workspace mounted at the same absolute path in the container. Defaults to $PI_SANDBOX_WORKSPACE or current directory.",
     )
     parser.add_argument(
         "--pi-home",
@@ -215,6 +227,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             f"Host context dir mounted read-only at {CONTAINER_HOME}/docs. "
+            "Unset by default; use 'none' to disable an env/config value."
+        ),
+    )
+    parser.add_argument(
+        "--gh-config",
+        default=None,
+        help=(
+            f"Host GitHub CLI config dir mounted read-only at {CONTAINER_GH_CONFIG}. "
             "Unset by default; use 'none' to disable an env/config value."
         ),
     )
@@ -251,9 +271,13 @@ def main(argv: list[str]) -> int:
     context_home_value = none_if_disabled(
         resolve_value(args.context_home, "PI_SANDBOX_CONTEXT_HOME", config, "context-home", None)
     )
+    gh_config_value = none_if_disabled(
+        resolve_value(args.gh_config, "PI_SANDBOX_GH_CONFIG", config, "gh-config", None)
+    )
 
     pi_home = pi_home_mount_source(pi_home_value)
     context_home = mkdir_abs(context_home_value) if context_home_value is not None else None
+    gh_config = mkdir_abs(gh_config_value) if gh_config_value is not None else None
 
     if pull:
         if not run_checked(["docker", "pull", image]):
@@ -279,16 +303,31 @@ def main(argv: list[str]) -> int:
         "run",
         "--rm",
         *tty_args,
+        "--user",
+        f"{os.getuid()}:{os.getgid()}",
+        "-e",
+        f"HOME={CONTAINER_HOME}",
+        "-e",
+        "TERM=xterm-256color",
+        "-e",
+        "COLORTERM=truecolor",
         "-v",
-        f"{workspace}:/workspace",
+        f"{workspace}:{workspace}",
         "-v",
         f"{pi_home}:{CONTAINER_HOME}/.pi/agent",
     ]
+    if gh_config is not None:
+        command += [
+            "-e",
+            f"GH_CONFIG_DIR={CONTAINER_GH_CONFIG}",
+            "-v",
+            f"{gh_config}:{CONTAINER_GH_CONFIG}:ro",
+        ]
     if context_home is not None:
         command += ["-v", f"{context_home}:{CONTAINER_HOME}/docs:ro"]
     command += [
         "-w",
-        "/workspace",
+        workspace,
         image,
         *pi_args,
     ]
