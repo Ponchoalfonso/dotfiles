@@ -13,9 +13,6 @@
       "gh *": "ask",
       "git push *": "ask"
     },
-    "external_directory": {
-      "*": "ask",
-      "~/docs/*": "allow"
-    }
+    "external_directory": "allow"
   }
 }

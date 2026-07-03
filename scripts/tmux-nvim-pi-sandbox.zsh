@@ -20,7 +20,7 @@ if [[ -n "${TMUX:-}" ]]; then
   tmux split-window -h -t "$NVIM_PANE" -l 30% "$PI_SANDBOX_CMD"
   tmux select-pane -t "$NVIM_PANE"
 else
-  TMUX_CREATED="$(tmux new-session -d -P -F '#{session_name} #{pane_id}' -n editor "$NVIM_CMD")"
+  TMUX_CREATED="$(tmux new-session -d -x "$(tput cols)" -y "$(tput lines)" -P -F '#{session_name} #{pane_id}' -n editor "$NVIM_CMD")"
   SESSION_NAME="${TMUX_CREATED%% *}"
   NVIM_PANE="${TMUX_CREATED#* }"
   tmux split-window -h -t "$NVIM_PANE" -l 30% "$PI_SANDBOX_CMD"
