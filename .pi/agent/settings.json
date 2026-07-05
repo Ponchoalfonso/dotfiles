@@ -10,7 +10,6 @@
     "npm:pi-vim",
     "npm:pi-web-access",
     "npm:pi-subagents",
-    "npm:pi-intercom",
     "npm:@gotgenes/pi-permission-system"
   ],
   "piVim": {
