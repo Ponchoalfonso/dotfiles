@@ -5,3 +5,4 @@ pull = true
 pi-home = "~/.pi/agent"
 context-home = "~/docs"
 gh-config = "~/.config/gh"
+networks = ["rpminer"]
