@@ -105,7 +105,9 @@ else
   git clone --bare https://github.com/Ponchoalfonso/dotfiles.git "$DOTFILES_DIR"
 fi
 
-alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+dotf() {
+  git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
+}
 
 dotf config status.showUntrackedFiles no
 dotf config core.sparseCheckout true
