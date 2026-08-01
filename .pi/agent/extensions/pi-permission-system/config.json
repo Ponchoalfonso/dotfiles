@@ -3,8 +3,8 @@
     "*": "allow",
     "path": {
       "*": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
+      "*.env": "ask",
+      "*.env.*": "ask",
       "*.env.example": "allow"
     },
     "bash": {
