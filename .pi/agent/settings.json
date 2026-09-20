@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.83.0",
+  "lastChangelogVersion": "0.86.1",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-sol",
   "defaultThinkingLevel": "medium",
@@ -7,10 +7,15 @@
     "npm"
   ],
   "packages": [
-    "npm:pi-vim",
     "npm:pi-web-access",
     "npm:pi-subagents",
-    "npm:@gotgenes/pi-permission-system"
+    "npm:@gotgenes/pi-permission-system",
+    {
+      "source": "npm:pi-vim",
+      "extensions": [
+        "+index.ts"
+      ]
+    }
   ],
   "piVim": {
     "clipboardMirror": "all"
